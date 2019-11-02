@@ -9,7 +9,13 @@ const Faye = require("faye")
 require("dotenv").config()
 
 const app = Express()
-const redis = new Redis(process.env.REDIS_URL)
+const redis = new Redis({
+  port: process.env.REDIS_PORT, // Redis port
+  host: process.env.REDIS_HOST, // Redis host
+  family: 4, // 4 (IPv4) or 6 (IPv6)
+  password: process.env.REDIS_PASS,
+  db: 0
+})
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
