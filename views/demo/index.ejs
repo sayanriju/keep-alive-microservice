@@ -24,12 +24,12 @@
     <div id="app">
       <h2>{{ id }}</h2>
       <br/>
-      Online: {{ isOnline }}
+      {{ isOnline ? "Online" : "Offline" }}
       <br/><br/>
       <button @click="toggleOnlineState()" :disabled="statusChangeInProgress === true">Toggle Online State</button>
     </div>
     <script>
-    var HEARTBEAT_SEND_INTERVAL = 5 // seconds
+    var HEARTBEAT_SEND_INTERVAL = 2 // seconds
     var faye = new Faye.Client('<%= siteUrl %>/faye')
     var app = new Vue({
       el: '#app',
@@ -42,15 +42,19 @@
       created() {
         this.id = cuid.slug()
         this.startSendingHeartbeats()
-        faye.subscribe("/just-came-online", function ({ id }) {
+        faye.subscribe("/just-came-online", ({ id }) => {
           console.log("==> Just came online: ", id);
-          if (id === this.id) this.isOnline = true
-          this.statusChangeInProgress = false
+          if (id === this.id) {
+            this.isOnline = true
+            this.statusChangeInProgress = false
+          }
         })
-        faye.subscribe("/went-offline", function ({ ids }) {
+        faye.subscribe("/went-offline", ({ ids }) => {
           console.log("==> Went offline: ", ids);
-          if (ids.includes(this.id)) this.isOnline = false
-          this.statusChangeInProgress = false
+          if (ids.includes(this.id)) {
+            this.isOnline = false
+            this.statusChangeInProgress = false
+          }
         })
       },
       destroyed() {

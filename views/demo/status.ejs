@@ -22,7 +22,7 @@
   <body>
     <div id="app">
       <ul>
-        <li v-for="id in onlines">
+        <li v-for="id in allIds">
           {{ id }} ==> {{ status(id) }}
       </ul>
     </div>
@@ -39,7 +39,7 @@
         faye.subscribe("/just-came-online", ({ id }) => {
           console.log("==> Just came online: ", id);
           this.onlines = [...new Set([...this.onlines, id])]
-          this.allIds = [...new Set([...this.onlines, id])]
+          this.allIds = [...this.onlines]
           this.statusChangeInProgress = false
         })
         faye.subscribe("/went-offline", ({ ids:offlines }) => {
