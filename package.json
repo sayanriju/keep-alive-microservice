@@ -1,0 +1,27 @@
+{
+  "name": "online-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./bin/www"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "date-fns": "^2.6.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "faye": "^1.2.4",
+    "ioredis": "^4.14.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "nodemon": "^1.19.4"
+  }
+}

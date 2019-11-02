@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Current Status</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="<%= siteUrl %>/faye/client.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <ul>
+        <li v-for="id in onlines">
+          {{ id }} ==> {{ status(id) }}
+      </ul>
+    </div>
+    <script>
+    var faye = new Faye.Client('<%= siteUrl %>/faye')
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!',
+        allIds: <%- JSON.stringify(onlines)  %>,
+        onlines: <%- JSON.stringify(onlines)  %>
+      },
+      created() {
+        faye.subscribe("/just-came-online", ({ id }) => {
+          console.log("==> Just came online: ", id);
+          this.onlines = [...new Set([...this.onlines, id])]
+          this.allIds = [...new Set([...this.onlines, id])]
+          this.statusChangeInProgress = false
+        })
+        faye.subscribe("/went-offline", ({ ids:offlines }) => {
+          console.log("==> Went offline: ", offlines);
+          this.onlines = this.onlines.filter(id => !offlines.includes(id))
+          this.statusChangeInProgress = false
+        })
+      },
+      methods: {
+        status(id) {
+          return this.onlines.includes(id) ? "Online" : "Offline"
+        }
+      }
+    })
+    </script>
+  </body>
+</html>
